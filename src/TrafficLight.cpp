@@ -56,7 +56,7 @@ void TrafficLight::waitForGreen()
 
 TrafficLightPhase TrafficLight::getCurrentPhase()
 {
-    std::unique_lock u(_mutex);
+    std::unique_lock <std::mutex> u(_mutex);
     return _currentPhase;
 }
 
@@ -89,7 +89,7 @@ void TrafficLight::cycleThroughPhases()
         cycleend = std::chrono::system_clock::now();
         difference = std::chrono::duration_cast<std::chrono::seconds>(cycleend - cyclestart).count();
         if (difference >= cycleduration) {
-            std::lock_guard lck(_mutex);
+            std::lock_guard<std::mutex> lck(_mutex);
             _currentPhase = _currentPhase == TrafficLightPhase::red ? TrafficLightPhase::green : TrafficLightPhase::red;  
             temp = _currentPhase;
             _messagequeue.send(std::move(temp));
